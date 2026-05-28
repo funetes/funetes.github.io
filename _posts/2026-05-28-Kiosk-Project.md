@@ -17,6 +17,8 @@ tags:
 
 [개발진행 문서](https://www.notion.so/35f3f8c547ec80678009e4eeb46288ce?source=copy_link)
 
+[repository](https://github.com/funetes/0522-Kiosk-project)
+
 ---
 
 1. 기본 앱 ai 로 생성
