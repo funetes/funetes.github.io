@@ -54,6 +54,7 @@
   }
   .post-wrapper {
     display: block;
+    padding: 20px 0px;
   }
 }
 
@@ -167,7 +168,9 @@
   flex: 0 0 240px;
   position: sticky;
   top: 40px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
 .sidebar-header {
@@ -279,14 +282,18 @@
   border-radius: 0;
   box-shadow: none;
   border: none;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
 }
 .page-numbers {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-.page-btn, .page-num-btn, .page-ellipsis {
+.page-btn,
+.page-num-btn,
+.page-ellipsis {
   font-size: 1rem;
   color: #adbac7 !important;
   text-decoration: none !important;
