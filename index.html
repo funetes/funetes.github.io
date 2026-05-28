@@ -2,86 +2,179 @@
 layout: default
 ---
 
-<ul>
-  {% for post in paginator.posts %}
-    <li class="post-item-row">
-      <a href="{{ post.url | relative_url }}">{{ post.date | date: "%Y-%m-%d" }} - {{ post.title }}</a>
-      {% if post.categories %}
-        {% for category in post.categories %}
-          <span class="category-badge">{{ category }}</span>
-        {% endfor %}
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
-
-{% if paginator.total_pages > 1 %}
-<div class="pagination-wrapper">
-  <div class="pagination">
-    <!-- Previous Page Link -->
-    {% if paginator.previous_page %}
-      <a href="{{ paginator.previous_page_path | relative_url }}" class="page-btn prev-btn">
-        <span class="chevron">&lsaquo;</span> Previous
-      </a>
-    {% else %}
-      <span class="page-btn prev-btn disabled">
-        <span class="chevron">&lsaquo;</span> Previous
-      </span>
-    {% endif %}
-
-    <!-- Page Numbers -->
-    <div class="page-numbers">
-      {% assign current_page = paginator.page %}
-      {% assign total_pages = paginator.total_pages %}
-      
-      {% for page_num in (1..total_pages) %}
-        {% if page_num == 1 %}
-          {% if current_page == 1 %}
-            <span class="page-num-btn active">1</span>
-          {% else %}
-            <a href="{{ '/' | relative_url }}" class="page-num-btn">1</a>
-          {% endif %}
-        {% elsif page_num == total_pages %}
-          {% assign gap = total_pages | minus: current_page %}
-          {% if gap > 2 %}
-            <span class="page-ellipsis">...</span>
-          {% endif %}
-          
-          {% if current_page == total_pages %}
-            <span class="page-num-btn active">{{ total_pages }}</span>
-          {% else %}
-            <a href="{{ '/page' | append: total_pages | append: '/' | relative_url }}" class="page-num-btn">{{ total_pages }}</a>
-          {% endif %}
-        {% else %}
-          <!-- Middle Pages -->
-          {% assign diff = page_num | minus: current_page | abs %}
-          {% if diff <= 1 %}
-            {% if page_num == current_page %}
-              <span class="page-num-btn active">{{ page_num }}</span>
-            {% else %}
-              <a href="{{ '/page' | append: page_num | append: '/' | relative_url }}" class="page-num-btn">{{ page_num }}</a>
-            {% endif %}
-          {% elsif page_num == 2 %}
-            {% assign gap_prev = current_page | minus: 1 %}
-            {% if gap_prev > 2 %}
-              <span class="page-ellipsis">...</span>
-            {% endif %}
-          {% endif %}
-        {% endif %}
-      {% endfor %}
+<div class="home-wrapper">
+  <!-- 좌측 사이드바: 카테고리 목록 -->
+  <aside class="home-sidebar">
+    <div class="sidebar-header">
+      Categories
     </div>
+    <ul class="sidebar-menu">
+      <li class="menu-item active" data-filter="all">
+        <span class="menu-text">All</span>
+        <span class="menu-count">{{ site.posts | size }}</span>
+      </li>
+      {% assign categories = site.categories | sort %}
+      {% for category in categories %}
+        {% assign category_name = category[0] %}
+        {% assign category_posts = category[1] %}
+        <li class="menu-item" data-filter="{{ category_name | downcase }}">
+          <span class="menu-text">{{ category_name | capitalize }}</span>
+          <span class="menu-count">{{ category_posts | size }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </aside>
 
-    <!-- Next Page Link -->
-    {% if paginator.next_page %}
-      <a href="{{ paginator.next_page_path | relative_url }}" class="page-btn next-btn">
-        Next <span class="chevron">&rsaquo;</span>
-      </a>
-    {% else %}
-      <span class="page-btn next-btn disabled">
-        Next <span class="chevron">&rsaquo;</span>
-      </span>
-    {% endif %}
+  <!-- 우측 본문: 포스트 리스트 -->
+  <div class="home-content">
+    <!-- 1. 기본 페이지네이션 리스트 (All 선택 시 활성화) -->
+    <ul class="post-list paginated-list">
+      {% for post in paginator.posts %}
+        <li class="post-item-row">
+          <a href="{{ post.url | relative_url }}">{{ post.date | date: "%Y-%m-%d" }} - {{ post.title }}</a>
+          {% if post.categories %}
+            {% for category in post.categories %}
+              <span class="category-badge">{{ category }}</span>
+            {% endfor %}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- 2. 전체 포스트 리스트 (특정 카테고리 필터링 시 활성화) -->
+    <ul class="post-list all-posts-list" style="display: none;">
+      {% for post in site.posts %}
+        {% assign post_categories = "" %}
+        {% if post.categories %}
+          {% for cat in post.categories %}
+            {% assign post_categories = post_categories | append: cat | append: "," %}
+          {% endfor %}
+        {% endif %}
+        <li class="post-item-row" data-categories="{{ post_categories | downcase }}">
+          <a href="{{ post.url | relative_url }}">{{ post.date | date: "%Y-%m-%d" }} - {{ post.title }}</a>
+          {% if post.categories %}
+            {% for category in post.categories %}
+              <span class="category-badge">{{ category }}</span>
+            {% endfor %}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- 페이지네이션 (All 선택 시에만 보임) -->
+    <div class="home-pagination">
+      {% if paginator.total_pages > 1 %}
+      <div class="pagination-wrapper">
+        <div class="pagination">
+          <!-- Previous Page Link -->
+          {% if paginator.previous_page %}
+            <a href="{{ paginator.previous_page_path | relative_url }}" class="page-btn prev-btn">
+              <span class="chevron">&lsaquo;</span> Previous
+            </a>
+          {% else %}
+            <span class="page-btn prev-btn disabled">
+              <span class="chevron">&lsaquo;</span> Previous
+            </span>
+          {% endif %}
+
+          <!-- Page Numbers -->
+          <div class="page-numbers">
+            {% assign current_page = paginator.page %}
+            {% assign total_pages = paginator.total_pages %}
+            
+            {% for page_num in (1..total_pages) %}
+              {% if page_num == 1 %}
+                {% if current_page == 1 %}
+                  <span class="page-num-btn active">1</span>
+                {% else %}
+                  <a href="{{ '/' | relative_url }}" class="page-num-btn">1</a>
+                {% endif %}
+              {% elsif page_num == total_pages %}
+                {% assign gap = total_pages | minus: current_page %}
+                {% if gap > 2 %}
+                  <span class="page-ellipsis">...</span>
+                {% endif %}
+                
+                {% if current_page == total_pages %}
+                  <span class="page-num-btn active">{{ total_pages }}</span>
+                {% else %}
+                  <a href="{{ '/page' | append: page_num | append: '/' | relative_url }}" class="page-num-btn">{{ total_pages }}</a>
+                {% endif %}
+              {% else %}
+                <!-- Middle Pages -->
+                {% assign diff = page_num | minus: current_page | abs %}
+                {% if diff <= 1 %}
+                  {% if page_num == current_page %}
+                    <span class="page-num-btn active">{{ page_num }}</span>
+                  {% else %}
+                    <a href="{{ '/page' | append: page_num | append: '/' | relative_url }}" class="page-num-btn">{{ page_num }}</a>
+                  {% endif %}
+                {% elsif page_num == 2 %}
+                  {% assign gap_prev = current_page | minus: 1 %}
+                  {% if gap_prev > 2 %}
+                    <span class="page-ellipsis">...</span>
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- Next Page Link -->
+          {% if paginator.next_page %}
+            <a href="{{ paginator.next_page_path | relative_url }}" class="page-btn next-btn">
+              Next <span class="chevron">&rsaquo;</span>
+            </a>
+          {% else %}
+            <span class="page-btn next-btn disabled">
+              Next <span class="chevron">&rsaquo;</span>
+            </span>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
   </div>
 </div>
-{% endif %}
+
+<!-- 필터링 동작 스크립트 -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
+    const paginatedList = document.querySelector('.paginated-list');
+    const allPostsList = document.querySelector('.all-posts-list');
+    const allPostItems = document.querySelectorAll('.all-posts-list .post-item-row');
+    const paginationContainer = document.querySelector('.home-pagination');
+
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        // 기존 액티브 해제 및 현재 액티브 설정
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+
+        const filter = this.getAttribute('data-filter');
+
+        if (filter === 'all') {
+          // 'All' 선택 시
+          paginatedList.style.display = 'block';
+          allPostsList.style.display = 'none';
+          if (paginationContainer) paginationContainer.style.display = 'block';
+        } else {
+          // 특정 카테고리 선택 시
+          paginatedList.style.display = 'none';
+          if (paginationContainer) paginationContainer.style.display = 'none';
+          allPostsList.style.display = 'block';
+
+          allPostItems.forEach(post => {
+            const categories = post.getAttribute('data-categories').split(',');
+            if (categories.includes(filter)) {
+              post.style.display = 'flex';
+            } else {
+              post.style.display = 'none';
+            }
+          });
+        }
+      });
+    });
+  });
+</script>
 

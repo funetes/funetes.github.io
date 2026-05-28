@@ -82,6 +82,116 @@
   color: #ccc;
 }
 
+/* ===== 메인 레이아웃 및 카테고리 사이드바 ===== */
+.home-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  align-items: flex-start;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.home-sidebar {
+  flex: 0 0 240px;
+  position: sticky;
+  top: 40px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.sidebar-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #57606a;
+  letter-spacing: 1px;
+  margin-bottom: 0.8rem;
+  padding-left: 10px;
+  text-transform: uppercase;
+}
+
+.sidebar-menu {
+  list-style: none !important;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-menu .menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #24292f;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-menu .menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.sidebar-menu .menu-item.active {
+  font-weight: 600;
+  color: #157878;
+  background-color: rgba(21, 120, 120, 0.08);
+}
+
+.sidebar-menu .menu-count {
+  font-size: 0.8rem;
+  color: #57606a;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 2px 6px;
+  border-radius: 20px;
+}
+
+.sidebar-menu .menu-item.active .menu-count {
+  background-color: rgba(21, 120, 120, 0.15);
+  color: #157878;
+}
+
+.home-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-list {
+  list-style: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+/* 모바일 반응형 대응 (TOC와 유사하게 적용) */
+@media (max-width: 768px) {
+  .home-wrapper {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .home-sidebar {
+    flex: none;
+    width: 100%;
+    position: static;
+  }
+  .sidebar-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    gap: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebar-menu .menu-item {
+    flex-shrink: 0;
+    padding: 6px 12px;
+  }
+  .sidebar-header {
+    margin-bottom: 0.5rem;
+  }
+}
+
 /* ===== 페이지네이션 스타일 (커스텀 디자인) ===== */
 .pagination-wrapper {
   margin-top: 3.5rem;
@@ -285,5 +395,28 @@
   .category-badge {
     color: #58a6ff !important;
     background-color: rgba(88, 166, 255, 0.15);
+  }
+
+  /* 카테고리 사이드바 다크모드 */
+  .sidebar-header {
+    color: #768390;
+  }
+  .sidebar-menu .menu-item {
+    color: #adbac7;
+  }
+  .sidebar-menu .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  .sidebar-menu .menu-item.active {
+    color: #58a6ff;
+    background-color: rgba(88, 166, 255, 0.15);
+  }
+  .sidebar-menu .menu-count {
+    color: #768390;
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+  .sidebar-menu .menu-item.active .menu-count {
+    background-color: rgba(88, 166, 255, 0.25);
+    color: #58a6ff;
   }
 }
