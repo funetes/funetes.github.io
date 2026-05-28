@@ -72,6 +72,7 @@
   background-color: #161b22;
   border: 1px solid #30363d;
   border-radius: 12px;
+  text-decoration: none !important;
 }
 
 .post-card-content {
@@ -115,16 +116,7 @@
   font-weight: 700;
   line-height: 1.4;
   margin: 0 0 0.5rem 0;
-}
-
-.post-card-title a {
   color: #adbac7 !important;
-  text-decoration: none !important;
-  transition: color 0.15s ease;
-}
-
-.post-card-title a:hover {
-  color: #58a6ff !important;
 }
 
 .post-card-excerpt {
