@@ -57,6 +57,31 @@
   }
 }
 
+/* ===== 카테고리 배지 스타일 ===== */
+.post-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #157878 !important;
+  background-color: rgba(21, 120, 120, 0.08);
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+.category-separator {
+  margin: 0 0.4rem;
+  color: #ccc;
+}
+
 /* ===== 페이지네이션 스타일 (커스텀 디자인) ===== */
 .pagination-wrapper {
   margin-top: 3.5rem;
@@ -254,5 +279,11 @@
   }
   .page-ellipsis {
     color: #768390 !important;
+  }
+
+  /* 카테고리 배지 다크모드 */
+  .category-badge {
+    color: #58a6ff !important;
+    background-color: rgba(88, 166, 255, 0.15);
   }
 }

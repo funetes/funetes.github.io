@@ -4,8 +4,13 @@ layout: default
 
 <ul>
   {% for post in paginator.posts %}
-    <li>
+    <li class="post-item-row">
       <a href="{{ post.url | relative_url }}">{{ post.date | date: "%Y-%m-%d" }} - {{ post.title }}</a>
+      {% if post.categories %}
+        {% for category in post.categories %}
+          <span class="category-badge">{{ category }}</span>
+        {% endfor %}
+      {% endif %}
     </li>
   {% endfor %}
 </ul>

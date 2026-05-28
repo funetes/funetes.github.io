@@ -2,7 +2,7 @@
 layout: post
 title: "Practice) RRR Manipulator 2"
 date: 2026-04-22
-categories: robotisc
+categories: robotics
 tags:
   - robotics
   - manipulator
