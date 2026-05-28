@@ -30,13 +30,53 @@ layout: default
     <!-- 1. 기본 페이지네이션 리스트 (All 선택 시 활성화) -->
     <ul class="post-list paginated-list">
       {% for post in paginator.posts %}
-        <li class="post-item-row">
-          <a href="{{ post.url | relative_url }}">{{ post.date | date: "%Y-%m-%d" }} - {{ post.title }}</a>
-          {% if post.categories %}
-            {% for category in post.categories %}
-              <span class="category-badge">{{ category }}</span>
-            {% endfor %}
+        <!-- Thumbnail extraction -->
+        {% assign post_image = nil %}
+        {% if post.thumbnail %}
+          {% assign post_image = post.thumbnail | relative_url %}
+        {% elsif post.image %}
+          {% assign post_image = post.image | relative_url %}
+        {% elsif post.content contains '<img' %}
+          {% assign img_parts = post.content | split: '<img src="' %}
+          {% if img_parts.size > 1 %}
+            {% assign post_image = img_parts[1] | split: '"' | first | relative_url %}
+          {% else %}
+            {% assign img_parts = post.content | split: "<img src='" %}
+            {% if img_parts.size > 1 %}
+              {% assign post_image = img_parts[1] | split: "'" | first | relative_url %}
+            {% endif %}
           {% endif %}
+        {% endif %}
+
+        <li class="post-card-row">
+          <div class="post-card {% if post_image %}has-image{% endif %}">
+            <div class="post-card-content">
+              <div class="post-card-meta">
+                {% if post.categories %}
+                  {% for category in post.categories %}
+                    <span class="category-badge">{{ category }}</span>
+                  {% endfor %}
+                {% endif %}
+                <span class="post-card-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+              </div>
+              
+              <h3 class="post-card-title">
+                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              </h3>
+              
+              <p class="post-card-excerpt">
+                {{ post.content | strip_html | strip_newlines | truncate: 140 }}
+              </p>
+            </div>
+
+            {% if post_image %}
+              <div class="post-card-thumbnail">
+                <a href="{{ post.url | relative_url }}">
+                  <img src="{{ post_image }}" alt="{{ post.title }}" loading="lazy" />
+                </a>
+              </div>
+            {% endif %}
+          </div>
         </li>
       {% endfor %}
     </ul>
@@ -50,13 +90,54 @@ layout: default
             {% assign post_categories = post_categories | append: cat | append: "," %}
           {% endfor %}
         {% endif %}
-        <li class="post-item-row" data-categories="{{ post_categories | downcase }}">
-          <a href="{{ post.url | relative_url }}">{{ post.date | date: "%Y-%m-%d" }} - {{ post.title }}</a>
-          {% if post.categories %}
-            {% for category in post.categories %}
-              <span class="category-badge">{{ category }}</span>
-            {% endfor %}
+
+        <!-- Thumbnail extraction -->
+        {% assign post_image = nil %}
+        {% if post.thumbnail %}
+          {% assign post_image = post.thumbnail | relative_url %}
+        {% elsif post.image %}
+          {% assign post_image = post.image | relative_url %}
+        {% elsif post.content contains '<img' %}
+          {% assign img_parts = post.content | split: '<img src="' %}
+          {% if img_parts.size > 1 %}
+            {% assign post_image = img_parts[1] | split: '"' | first | relative_url %}
+          {% else %}
+            {% assign img_parts = post.content | split: "<img src='" %}
+            {% if img_parts.size > 1 %}
+              {% assign post_image = img_parts[1] | split: "'" | first | relative_url %}
+            {% endif %}
           {% endif %}
+        {% endif %}
+
+        <li class="post-card-row" data-categories="{{ post_categories | downcase }}">
+          <div class="post-card {% if post_image %}has-image{% endif %}">
+            <div class="post-card-content">
+              <div class="post-card-meta">
+                {% if post.categories %}
+                  {% for category in post.categories %}
+                    <span class="category-badge">{{ category }}</span>
+                  {% endfor %}
+                {% endif %}
+                <span class="post-card-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+              </div>
+              
+              <h3 class="post-card-title">
+                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              </h3>
+              
+              <p class="post-card-excerpt">
+                {{ post.content | strip_html | strip_newlines | truncate: 140 }}
+              </p>
+            </div>
+
+            {% if post_image %}
+              <div class="post-card-thumbnail">
+                <a href="{{ post.url | relative_url }}">
+                  <img src="{{ post_image }}" alt="{{ post.title }}" loading="lazy" />
+                </a>
+              </div>
+            {% endif %}
+          </div>
         </li>
       {% endfor %}
     </ul>
@@ -98,7 +179,7 @@ layout: default
                 {% if current_page == total_pages %}
                   <span class="page-num-btn active">{{ total_pages }}</span>
                 {% else %}
-                  <a href="{{ '/page' | append: page_num | append: '/' | relative_url }}" class="page-num-btn">{{ total_pages }}</a>
+                  <a href="{{ '/page' | append: total_pages | append: '/' | relative_url }}" class="page-num-btn">{{ total_pages }}</a>
                 {% endif %}
               {% else %}
                 <!-- Middle Pages -->
@@ -142,7 +223,7 @@ layout: default
     const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
     const paginatedList = document.querySelector('.paginated-list');
     const allPostsList = document.querySelector('.all-posts-list');
-    const allPostItems = document.querySelectorAll('.all-posts-list .post-item-row');
+    const allPostItems = document.querySelectorAll('.all-posts-list .post-card-row');
     const paginationContainer = document.querySelector('.home-pagination');
 
     menuItems.forEach(item => {
@@ -167,7 +248,7 @@ layout: default
           allPostItems.forEach(post => {
             const categories = post.getAttribute('data-categories').split(',');
             if (categories.includes(filter)) {
-              post.style.display = 'flex';
+              post.style.display = 'block';
             } else {
               post.style.display = 'none';
             }
