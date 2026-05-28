@@ -2,10 +2,11 @@
 layout: post
 title: "Practice) RRR Manipulator 2"
 date: 2026-04-22
-categories: robotics
+categories: Kinematics
 tags:
   - robotics
   - manipulator
+  - Kinematics
 ---
 
 <!-- 여기에 포스트 내용을 작성하세요 -->

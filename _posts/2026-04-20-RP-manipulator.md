@@ -2,10 +2,11 @@
 layout: post
 title: "RP-manipulator"
 date: 2026-04-24
-categories: robotics
+categories: Kinematics
 tags:
   - manipulator
   - kinematics
+  - robotics
 ---
 
 ![Pasted image 20260424114855.png](/assets/images/Pasted-image-20260424114855.png)

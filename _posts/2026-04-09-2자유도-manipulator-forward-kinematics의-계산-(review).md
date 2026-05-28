@@ -2,10 +2,11 @@
 layout: post
 title: "2자유도 manipulator forward kinematics의 계산 (review)"
 date: 2026-04-09
-categories: robotics
+categories: Kinematics
 tags:
   - robotics
   - manipulator
+  - Kinematics
 ---
 
 ![Pasted image 20260409101830.png](/assets/images/Pasted-image-20260409101830.png)
