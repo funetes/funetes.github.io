@@ -57,6 +57,53 @@
   }
 }
 
+/* ===== 페이지네이션 스타일 ===== */
+.pagination-wrapper {
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+.pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.page-btn {
+  display: inline-block;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff !important;
+  background-color: #157878;
+  border-radius: 30px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  border: none;
+}
+.page-btn:not(.disabled):hover {
+  background-color: #115555;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(21, 120, 120, 0.2);
+}
+.page-btn.disabled {
+  background-color: #e9ecef;
+  color: #adb5bd !important;
+  cursor: not-allowed;
+}
+.page-info {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+.page-info strong {
+  color: #157878;
+}
+
 /* ===== 다크모드 설정 ===== */
 @media (prefers-color-scheme: dark) {
   body {
@@ -153,5 +200,33 @@
     background-color: #30363d !important;
     border: 0 !important;
     height: 1px;
+  }
+
+  /* 페이지네이션 다크모드 */
+  .pagination {
+    background-color: #161b22 !important;
+    border-color: #30363d !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  .page-btn {
+    background-color: #21262d !important;
+    color: #c9d1d9 !important;
+    border: 1px solid #30363d !important;
+  }
+  .page-btn:not(.disabled):hover {
+    background-color: #30363d !important;
+    border-color: #8b949e !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  .page-btn.disabled {
+    background-color: #0d1117 !important;
+    color: #484f58 !important;
+    border-color: #21262d !important;
+  }
+  .page-info {
+    color: #8b949e !important;
+  }
+  .page-info strong {
+    color: #58a6ff !important;
   }
 }
