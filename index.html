@@ -13,24 +13,68 @@ layout: default
 {% if paginator.total_pages > 1 %}
 <div class="pagination-wrapper">
   <div class="pagination">
+    <!-- Previous Page Link -->
     {% if paginator.previous_page %}
       <a href="{{ paginator.previous_page_path | relative_url }}" class="page-btn prev-btn">
-        &larr; 이전
+        <span class="chevron">&lsaquo;</span> Previous
       </a>
     {% else %}
-      <span class="page-btn prev-btn disabled">&larr; 이전</span>
+      <span class="page-btn prev-btn disabled">
+        <span class="chevron">&lsaquo;</span> Previous
+      </span>
     {% endif %}
 
-    <span class="page-info">
-      페이지 <strong>{{ paginator.page }}</strong> / {{ paginator.total_pages }}
-    </span>
+    <!-- Page Numbers -->
+    <div class="page-numbers">
+      {% assign current_page = paginator.page %}
+      {% assign total_pages = paginator.total_pages %}
+      
+      {% for page_num in (1..total_pages) %}
+        {% if page_num == 1 %}
+          {% if current_page == 1 %}
+            <span class="page-num-btn active">1</span>
+          {% else %}
+            <a href="{{ '/' | relative_url }}" class="page-num-btn">1</a>
+          {% endif %}
+        {% elsif page_num == total_pages %}
+          {% assign gap = total_pages | minus: current_page %}
+          {% if gap > 2 %}
+            <span class="page-ellipsis">...</span>
+          {% endif %}
+          
+          {% if current_page == total_pages %}
+            <span class="page-num-btn active">{{ total_pages }}</span>
+          {% else %}
+            <a href="{{ '/page' | append: total_pages | append: '/' | relative_url }}" class="page-num-btn">{{ total_pages }}</a>
+          {% endif %}
+        {% else %}
+          <!-- Middle Pages -->
+          {% assign diff = page_num | minus: current_page | abs %}
+          {% if diff <= 1 %}
+            {% if page_num == current_page %}
+              <span class="page-num-btn active">{{ page_num }}</span>
+            {% else %}
+              <a href="{{ '/page' | append: page_num | append: '/' | relative_url }}" class="page-num-btn">{{ page_num }}</a>
+            {% endif %}
+          {% elsif page_num == 2 %}
+            {% assign gap_prev = current_page | minus: 1 %}
+            {% if gap_prev > 2 %}
+              <span class="page-ellipsis">...</span>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
 
+    <!-- Next Page Link -->
     {% if paginator.next_page %}
       <a href="{{ paginator.next_page_path | relative_url }}" class="page-btn next-btn">
-        다음 &rarr;
+        Next <span class="chevron">&rsaquo;</span>
       </a>
     {% else %}
-      <span class="page-btn next-btn disabled">다음 &rarr;</span>
+      <span class="page-btn next-btn disabled">
+        Next <span class="chevron">&rsaquo;</span>
+      </span>
     {% endif %}
   </div>
 </div>
