@@ -384,15 +384,103 @@ h6 {
   border-bottom-color: #30363d !important;
 }
 
+/* Inline code blocks (e.g. `code` in text) */
 code {
-  background-color: #161b22 !important;
-  color: #79c0ff !important;
+  background-color: #21262d !important; /* Slightly lighter than body background to pop out */
+  color: #e6edf3 !important;             /* Bright readable text color */
   border: 1px solid #30363d !important;
+  padding: 0.2em 0.4em !important;
+  border-radius: 6px !important;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important;
+  font-size: 85% !important;
 }
 
+/* Pre-formatted code blocks (multiline) */
 pre {
-  background-color: #0d1117 !important;
+  background-color: #161b22 !important; /* GitHub dark mode code block background */
   border: 1px solid #30363d !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Reset inline code styling inside pre-formatted blocks to avoid double backgrounds/borders */
+pre code {
+  background-color: transparent !important;
+  color: #e6edf3 !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: 90% !important;
+  font-family: inherit !important;
+}
+
+/* ===== Rouge Syntax Highlighting (Premium Dark Theme) ===== */
+.highlight {
+  background: transparent !important;
+}
+.highlight .c, .highlight .ch, .highlight .cm, .highlight .c1, .highlight .cs, .highlight .cp, .highlight .cpf {
+  color: #8b949e !important; /* Gray comments */
+  font-style: italic !important;
+}
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt, .highlight .kv {
+  color: #ff7b72 !important; /* Soft pink-red keywords */
+  font-weight: 600 !important;
+}
+.highlight .o, .highlight .ow {
+  color: #ff7b72 !important; /* Operators */
+}
+.highlight .p {
+  color: #e6edf3 !important; /* Punctuation */
+}
+.highlight .nb {
+  color: #79c0ff !important; /* Builtins */
+}
+.highlight .nc {
+  color: #ffa657 !important; /* Class names */
+  font-weight: 600 !important;
+}
+.highlight .nf, .highlight .fm {
+  color: #d2a8ff !important; /* Functions */
+  font-weight: 600 !important;
+}
+.highlight .nn {
+  color: #ffa657 !important; /* Namespaces */
+}
+.highlight .s, .highlight .sa, .highlight .sb, .highlight .sc, .highlight .dl, .highlight .sd, .highlight .s2, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr, .highlight .s1, .highlight .ss {
+  color: #a5d6ff !important; /* Soft blue strings */
+}
+.highlight .m, .highlight .mb, .highlight .mx, .highlight .mh, .highlight .mi, .highlight .mf, .highlight .mo, .highlight .il {
+  color: #79c0ff !important; /* Sky blue numbers */
+}
+.highlight .na {
+  color: #7ee787 !important; /* Attribute names */
+}
+.highlight .nt {
+  color: #7ee787 !important; /* Tag names */
+}
+.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi, .highlight .vm {
+  color: #ffa657 !important; /* Variables */
+}
+.highlight .nd {
+  color: #d2a8ff !important; /* Decorators */
+  font-weight: 600 !important;
+}
+.highlight .no {
+  color: #79c0ff !important; /* Constants */
+  font-weight: 600 !important;
+}
+.highlight .ni {
+  color: #e6edf3 !important;
+}
+.highlight .ne {
+  color: #f0883e !important; /* Exceptions */
+  font-weight: 600 !important;
+}
+.highlight .nl {
+  color: #ffa657 !important;
 }
 
 table {
