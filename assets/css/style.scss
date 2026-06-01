@@ -1,6 +1,8 @@
 ---
 ---
 
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
 @import "{{ site.theme }}";
 
 .main-content {
@@ -170,7 +172,7 @@
   position: sticky;
   top: 40px;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
 }
 
@@ -284,7 +286,7 @@
   box-shadow: none;
   border: none;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
 }
 .page-numbers {
@@ -354,6 +356,10 @@
 }
 
 /* ===== 전체 레이아웃 다크 테마 기본 적용 ===== */
+body, button, input, select, textarea {
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif !important;
+}
+
 body {
   background-color: #0d1117 !important;
   color: #c9d1d9 !important;
