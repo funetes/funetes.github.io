@@ -12,7 +12,7 @@ ROS2에서 Custom Interface(srv)를 정의하고, 이를 활용해 **C++로 Serv
 
 ---
 
-## [ROS2] C++로 Custom Service 만들기 (Interface 정의부터 Server/Client 구현까지)
+## Service with C++
 
 ROS2에서 노드 간 동기적인 통신을 위해 사용하는 **Service** 모델을 직접 구현해 봅시다. 두 숫자와 연산자를 전달하면 계산 결과를 반환하는 간단한 'Math Service' 예제입니다.
 
