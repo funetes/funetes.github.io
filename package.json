@@ -1,0 +1,8 @@
+{
+  "name": "funetes.github.io",
+  "private": true,
+  "scripts": {
+    "dev": "bundle exec jekyll serve",
+    "build": "bundle exec jekyll build"
+  }
+}

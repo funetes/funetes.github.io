@@ -5,3 +5,5 @@ sync-images.sh
 _site/
 .sass-cache/
 .jekyll-cache/
+vendor/
+.bundle/
