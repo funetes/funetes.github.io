@@ -2,29 +2,23 @@
 layout: default
 ---
 
-<small>
-  {{ page.date | date: "%Y-%m-%d" }}
-  {% if page.categories %}
-    <span class="category-separator">|</span>
-    {% for category in page.categories %}
-      <span class="category-badge">{{ category }}</span>
-    {% endfor %}
-  {% endif %}
-</small>
-
 <div class="post-wrapper">
-  <article class="js-toc-content">{{ content }}</article>
-  <aside class="toc-sidebar js-toc">
-    <h1>{{ page.title }}</h1>
-    <p style="color: #666; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+  <article class="js-toc-content">
+    <h1 class="post-title js-toc-ignore">{{ page.title }}</h1>
+    <p class="post-meta">
       {{ page.date | date: "%Y-%m-%d" }}
       {% if page.categories %}
+        <span class="category-separator">|</span>
         {% for category in page.categories %}
           <span class="category-badge">{{ category }}</span>
         {% endfor %}
       {% endif %}
     </p>
-    <hr />
+    {{ content }}
+  </article>
+  <aside class="toc-sidebar">
+    <div class="toc-title">On This Page</div>
+    <div class="js-toc"></div>
   </aside>
 </div>
 <a href="{{ site.baseurl }}/">← 메인으로</a>
@@ -39,6 +33,7 @@ layout: default
     tocSelector: ".js-toc", // TOC를 넣을 선택자
     contentSelector: ".js-toc-content", // 본문 내용 선택자
     headingSelector: "h1, h2, h3", // 목차로 만들 헤더 수준
+    ignoreSelector: ".js-toc-ignore", // 목차에서 제외할 헤더 선택자
     collapseDepth: 6, // 6단계까지는 접지 않고 항상 펼침
     showAndHide: false,
   });

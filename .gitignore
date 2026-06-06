@@ -1,3 +1,7 @@
 copy-image.sh
 np.sh
 sync-images.sh
+
+_site/
+.sass-cache/
+.jekyll-cache/
