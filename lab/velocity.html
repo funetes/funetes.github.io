@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>각속도</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        background-color: #0b0f19;
+        font-family:
+          "Pretendard",
+          -apple-system,
+          BlinkMacSystemFont,
+          system-ui,
+          Roboto,
+          sans-serif;
+      }
+      /* Custom scrollbar for side panels */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.3);
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.3);
+        border-radius: 3px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.5);
+      }
+    </style>
+  </head>
+  <body class="text-slate-200">
+    <!-- Loading Indicator -->
+    <div
+      id="loader"
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#090d16]"
+    >
+      <div
+        class="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"
+      ></div>
+      <p class="mt-4 text-cyan-400 font-semibold tracking-wider animate-pulse">
+        3D 실험 환경을 준비하는 중...
+      </p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="flex flex-col min-h-screen">
+      <!-- Header (Fixed at top) -->
+      <header
+        class="flex items-center gap-3 bg-slate-950 border-b border-slate-800 p-4 shrink-0 shadow-lg z-20"
+      >
+        <span class="flex h-3 w-3 relative">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"
+          ></span>
+          <span
+            class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"
+          ></span>
+        </span>
+        <h1
+          class="text-xl font-black bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent"
+        >
+          Angular Velocity
+        </h1>
+        <div
+          class="hidden md:flex ml-auto bg-slate-900 border border-slate-700 px-3 py-1 rounded-lg items-center gap-2 text-xs"
+        >
+          <i
+            class="fa-solid fa-circle-nodes text-cyan-400 animate-spin"
+            style="animation-duration: 6s"
+          ></i>
+          <span class="text-slate-400">created by gemini</span>
+        </div>
+      </header>
+
+      <!-- Top Area: Main 3D Canvas (Sticky at top of viewport, content scrolls underneath) -->
+      <main
+        id="canvas-container"
+        class="w-full h-[50vh] min-h-[380px] bg-slate-950 relative overflow-hidden shrink-0 sticky top-0 z-30 border-b border-slate-800/80 shadow-2xl"
+      >
+        <!-- Camera Preset Buttons Overlayed on Canvas -->
+        <div class="absolute bottom-4 right-4 z-20 flex flex-col gap-1.5">
+          <span
+            class="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-right"
+            >시점</span
+          >
+          <div class="flex gap-1">
+            <button
+              id="cam-iso"
+              class="bg-slate-800/80 backdrop-blur-sm hover:bg-slate-700 text-slate-200 py-1 px-2.5 rounded-lg transition text-xs"
+            >
+              입체
+            </button>
+            <button
+              id="cam-top"
+              class="bg-slate-800/80 backdrop-blur-sm hover:bg-slate-700 text-slate-200 py-1 px-2.5 rounded-lg transition text-xs"
+            >
+              탑뷰
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom Area: Scrollable Panel for Controls & Dashboard (Two-column layout on Desktop) -->
+      <section class="flex-1 bg-slate-950 p-4 md:p-6 lg:p-8 z-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Column (col-span-5): Controls -->
+          <div
+            class="lg:col-span-5 bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col gap-5"
+          >
+            <div class="border-b border-slate-800 pb-3">
+              <h2
+                class="font-bold text-lg text-slate-100 flex items-center gap-2"
+              >
+                <i class="fa-solid fa-sliders text-cyan-400"></i> 실험 컨트롤러
+              </h2>
+            </div>
+
+            <!-- Slider 1: Angular Velocity (Omega) -->
+            <div class="flex flex-col gap-2">
+              <div class="flex justify-between text-sm">
+                <span
+                  class="font-semibold text-cyan-400 flex items-center gap-1"
+                  >각속도 ($\omega$)</span
+                >
+                <span
+                  class="font-mono text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded"
+                  id="omega-value"
+                  >1.0 rad/s</span
+                >
+              </div>
+              <input
+                type="range"
+                id="omega-slider"
+                min="0"
+                max="4"
+                step="0.1"
+                value="1.0"
+                class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              />
+              <p class="text-[11px] text-slate-500 leading-tight">
+                1초당 회전하는 각도량입니다. 원판 위의 모든 지점에서 동일하게
+                적용됩니다.
+              </p>
+            </div>
+
+            <!-- Slider 2: Radius A (Cyan) -->
+            <div class="flex flex-col gap-2 border-t border-slate-800/60 pt-4">
+              <div class="flex justify-between text-sm">
+                <span
+                  class="font-semibold text-cyan-400 flex items-center gap-1.5"
+                >
+                  <span
+                    class="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"
+                  ></span>
+                  안쪽 반지름 ($r_1$)
+                </span>
+                <span
+                  class="font-mono text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded"
+                  id="r1-value"
+                  >3.0 m</span
+                >
+              </div>
+              <input
+                type="range"
+                id="r1-slider"
+                min="1"
+                max="5"
+                step="0.2"
+                value="3.0"
+                class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              />
+            </div>
+
+            <!-- Slider 3: Radius B (Pink) -->
+            <div class="flex flex-col gap-2 border-t border-slate-800/60 pt-4">
+              <div class="flex justify-between text-sm">
+                <span
+                  class="font-semibold text-pink-500 flex items-center gap-1.5"
+                >
+                  <span
+                    class="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"
+                  ></span>
+                  바깥쪽 반지름 ($r_2$)
+                </span>
+                <span
+                  class="font-mono text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded"
+                  id="r2-value"
+                  >6.0 m</span
+                >
+              </div>
+              <input
+                type="range"
+                id="r2-slider"
+                min="5.2"
+                max="9"
+                step="0.2"
+                value="6.0"
+                class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-pink-500"
+              />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 border-t border-slate-800/60 pt-4">
+              <button
+                id="btn-pause"
+                class="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl text-sm transition shadow-lg"
+              >
+                <i class="fa-solid fa-pause" id="btn-pause-icon"></i>
+                <span id="btn-pause-text">일시정지</span>
+              </button>
+              <button
+                id="btn-reset"
+                class="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-750 text-slate-300 py-2 px-4 rounded-xl transition text-xs font-semibold"
+              >
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>리셋</span>
+              </button>
+            </div>
+
+            <!-- Visualization Switches -->
+            <div
+              class="flex flex-col gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs text-slate-400"
+            >
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  id="show-vectors"
+                  checked
+                  class="rounded border-slate-700 text-cyan-500 bg-slate-800 w-4 h-4"
+                />
+                <span>선속도 벡터 ($v$) 표시</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  id="show-trails"
+                  checked
+                  class="rounded border-slate-700 text-cyan-500 bg-slate-800 w-4 h-4"
+                />
+                <span>이동 궤적(선) 표시</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Right Column (col-span-7): Metrics, Visualization Bars & Physics explanation -->
+          <div class="lg:col-span-7 flex flex-col gap-6">
+            <!-- Real-time Dashboard -->
+            <div
+              class="bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col gap-4"
+            >
+              <h3
+                class="font-bold text-base text-slate-200 flex items-center gap-2 border-b border-slate-800 pb-3"
+              >
+                <i class="fa-solid fa-chart-line text-indigo-400"></i> 실시간
+                물리 대시보드
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Object A (Cyan) Metrics -->
+                <div
+                  class="bg-cyan-950/20 border border-cyan-800/30 rounded-xl p-4"
+                >
+                  <div class="flex items-center gap-2 mb-3">
+                    <span
+                      class="w-3.5 h-3.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+                    ></span>
+                    <span class="font-bold text-cyan-400 text-sm"
+                      >안쪽 점 A</span
+                    >
+                  </div>
+                  <div class="text-xs space-y-2">
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">반지름($r_1$)</span
+                      ><span
+                        class="font-mono text-cyan-300 font-semibold"
+                        id="dash-r1"
+                        >3.0 m</span
+                      >
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">각속도($\omega$)</span
+                      ><span
+                        class="font-mono text-cyan-300 font-semibold"
+                        id="dash-w1"
+                        >1.0 rad/s</span
+                      >
+                    </div>
+                    <div
+                      class="flex justify-between border-t border-cyan-900/40 pt-2 mt-1.5"
+                    >
+                      <span class="text-slate-300 font-semibold"
+                        >선속도($v_1$)</span
+                      ><span
+                        class="font-mono text-cyan-400 font-black text-sm"
+                        id="dash-v1"
+                        >3.0 m/s</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Object B (Pink) Metrics -->
+                <div
+                  class="bg-pink-950/20 border border-pink-800/30 rounded-xl p-4"
+                >
+                  <div class="flex items-center gap-2 mb-3">
+                    <span
+                      class="w-3.5 h-3.5 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]"
+                    ></span>
+                    <span class="font-bold text-pink-500 text-sm"
+                      >바깥쪽 점 B</span
+                    >
+                  </div>
+                  <div class="text-xs space-y-2">
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">반지름($r_2$)</span
+                      ><span
+                        class="font-mono text-pink-300 font-semibold"
+                        id="dash-r2"
+                        >6.0 m</span
+                      >
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">각속도($\omega$)</span
+                      ><span
+                        class="font-mono text-pink-300 font-semibold"
+                        id="dash-w2"
+                        >1.0 rad/s</span
+                      >
+                    </div>
+                    <div
+                      class="flex justify-between border-t border-pink-900/40 pt-2 mt-1.5"
+                    >
+                      <span class="text-slate-300 font-semibold"
+                        >선속도($v_2$)</span
+                      ><span
+                        class="font-mono text-pink-500 font-black text-sm"
+                        id="dash-v2"
+                        >6.0 m/s</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Principle Card -->
+            <div
+              class="bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-2xl p-5 text-sm leading-relaxed space-y-3 text-slate-400"
+            >
+              <p
+                class="font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-2"
+              >
+                <i class="fa-solid fa-lightbulb text-amber-400"></i> 핵심 시각
+                정보
+              </p>
+              <p>
+                같은 원판 위에 있는 두 점은 동일한 시간이 흐를 때 똑같은 회전
+                각도를 소화하므로,
+                <strong class="text-cyan-400"
+                  >각속도($\omega$)는 모든 위치에서 완벽히 일치</strong
+                >합니다.
+              </p>
+              <p>
+                반면, 바깥쪽 점(B)은 안쪽 점(A)보다 한 바퀴 돌 때 커버해야 하는
+                **원 둘레(경로)가 훨씬 깁니다.** 따라서 동일한 시간 동안 훨씬 더
+                먼 거리를 이동하기 위해
+                <strong class="text-amber-300"
+                  >실제 속도인 선속도($v = r\omega$)가 반지름에 비례하여 더
+                  길어지고(벡터 화살표의 길이) 빨라지게</strong
+                >
+                됩니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // Setup configuration
+      const config = {
+        omega: 1.0,
+        r1: 3.0,
+        r2: 6.0,
+        showVectors: true,
+        showTrails: true,
+        isPlaying: true,
+      };
+
+      let scene,
+        camera,
+        renderer,
+        controls,
+        clock = new THREE.Clock();
+      let disc, pointA, pointB, vectorArrowA, vectorArrowB, trailA, trailB;
+      let currentAngle = 0;
+
+      // DOM Elements
+      const omegaSlider = document.getElementById("omega-slider"),
+        omegaValue = document.getElementById("omega-value");
+      const r1Slider = document.getElementById("r1-slider"),
+        r1Value = document.getElementById("r1-value");
+      const r2Slider = document.getElementById("r2-slider"),
+        r2Value = document.getElementById("r2-value");
+      const btnPause = document.getElementById("btn-pause"),
+        btnPauseIcon = document.getElementById("btn-pause-icon"),
+        btnPauseText = document.getElementById("btn-pause-text"),
+        btnReset = document.getElementById("btn-reset");
+      const showVectorsChk = document.getElementById("show-vectors"),
+        showTrailsChk = document.getElementById("show-trails");
+      const dashR1 = document.getElementById("dash-r1"),
+        dashW1 = document.getElementById("dash-w1"),
+        dashV1 = document.getElementById("dash-v1"),
+        dashR2 = document.getElementById("dash-r2"),
+        dashW2 = document.getElementById("dash-w2"),
+        dashV2 = document.getElementById("dash-v2");
+      const camIso = document.getElementById("cam-iso"),
+        camTop = document.getElementById("cam-top"),
+        loader = document.getElementById("loader");
+
+      window.onload = function () {
+        initThree();
+        setupEventListeners();
+        animate();
+        setTimeout(() => {
+          loader.style.opacity = "0";
+          setTimeout(() => loader.remove(), 500);
+        }, 600);
+      };
+
+      function initThree() {
+        const container = document.getElementById("canvas-container");
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x080a10);
+        camera = new THREE.PerspectiveCamera(
+          60,
+          container.clientWidth / container.clientHeight,
+          0.1,
+          1000,
+        );
+        setCameraPreset("iso");
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.maxPolarAngle = Math.PI / 2 - 0.05;
+
+        // Simple Lights
+        scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+        const dl = new THREE.DirectionalLight(0xffffff, 0.7);
+        dl.position.set(10, 20, 10);
+        dl.castShadow = true;
+        scene.add(dl);
+
+        createSystem();
+        window.addEventListener("resize", onWindowResize);
+      }
+
+      function createSystem() {
+        // Platform
+        disc = new THREE.Mesh(
+          new THREE.CylinderGeometry(10, 10, 0.1, 64),
+          new THREE.MeshStandardMaterial({
+            color: 0x111827,
+            metalness: 0.7,
+            transparent: true,
+            opacity: 0.8,
+          }),
+        );
+        disc.receiveShadow = true;
+        scene.add(disc);
+
+        // Marker rings on floor (outside disc for perspective)
+        for (let r = 5; r <= 20; r += 5) {
+          const floorRing = new THREE.Mesh(
+            new THREE.TorusGeometry(r, 0.02, 6, 64),
+            new THREE.MeshBasicMaterial({
+              color: 0x1e293b,
+              transparent: true,
+              opacity: 0.5,
+            }),
+          );
+          floorRing.rotation.x = Math.PI / 2;
+          floorRing.position.y = -0.1;
+          scene.add(floorRing);
+        }
+
+        // Object A (Cyan)
+        pointA = new THREE.Mesh(
+          new THREE.SphereGeometry(0.3, 24, 24),
+          new THREE.MeshStandardMaterial({
+            color: 0x06b6d4,
+            emissive: 0x0891b2,
+          }),
+        );
+        pointA.castShadow = true;
+        scene.add(pointA);
+
+        // Object B (Pink)
+        pointB = new THREE.Mesh(
+          new THREE.SphereGeometry(0.3, 24, 24),
+          new THREE.MeshStandardMaterial({
+            color: 0xec4899,
+            emissive: 0xdb2777,
+          }),
+        );
+        pointB.castShadow = true;
+        scene.add(pointB);
+
+        // Velocity Arrows
+        vectorArrowA = new THREE.ArrowHelper(
+          new THREE.Vector3(1, 0, 0),
+          new THREE.Vector3(0, 0, 0),
+          1,
+          0x06b6d4,
+          0.4,
+          0.2,
+        );
+        vectorArrowB = new THREE.ArrowHelper(
+          new THREE.Vector3(1, 0, 0),
+          new THREE.Vector3(0, 0, 0),
+          1,
+          0xec4899,
+          0.4,
+          0.2,
+        );
+        scene.add(vectorArrowA, vectorArrowB);
+
+        updateTrails();
+        updatePhysicsUI();
+      }
+
+      function updateTrails() {
+        if (trailA) scene.remove(trailA);
+        if (trailB) scene.remove(trailB);
+        if (!config.showTrails) return;
+        const matTrail = (color) =>
+          new THREE.MeshBasicMaterial({
+            color,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.3,
+          });
+        trailA = new THREE.Mesh(
+          new THREE.RingGeometry(config.r1 - 0.03, config.r1 + 0.03, 128),
+          matTrail(0x06b6d4),
+        );
+        trailA.rotateX(-Math.PI / 2);
+        trailA.position.y = 0.08;
+        scene.add(trailA);
+        trailB = new THREE.Mesh(
+          new THREE.RingGeometry(config.r2 - 0.03, config.r2 + 0.03, 128),
+          matTrail(0xec4899),
+        );
+        trailB.rotateX(-Math.PI / 2);
+        trailB.position.y = 0.08;
+        scene.add(trailB);
+      }
+
+      function setCameraPreset(view) {
+        if (view === "iso") camera.position.set(13, 10, 14);
+        else if (view === "top") camera.position.set(0, 18, 0.1);
+        if (controls) controls.target.set(0, 0, 0);
+      }
+
+      function updatePhysicsUI() {
+        const v1 = config.r1 * config.omega,
+          v2 = config.r2 * config.omega;
+        dashR1.innerText = `${config.r1.toFixed(1)} m`;
+        dashW1.innerText = `${config.omega.toFixed(1)} rad/s`;
+        dashV1.innerText = `${v1.toFixed(1)} m/s`;
+        dashR2.innerText = `${config.r2.toFixed(1)} m`;
+        dashW2.innerText = `${config.omega.toFixed(1)} rad/s`;
+        dashV2.innerText = `${v2.toFixed(1)} m/s`;
+      }
+
+      function setupEventListeners() {
+        const inputHandler = (slider, valueElem, key) => (e) => {
+          config[key] = parseFloat(e.target.value);
+          valueElem.innerText = `${config[key].toFixed(1)} m`;
+          updateTrails();
+          updatePhysicsUI();
+        };
+        omegaSlider.addEventListener("input", (e) => {
+          config.omega = parseFloat(e.target.value);
+          omegaValue.innerText = `${config.omega.toFixed(1)} rad/s`;
+          updatePhysicsUI();
+        });
+        r1Slider.addEventListener(
+          "input",
+          inputHandler(r1Slider, r1Value, "r1"),
+        );
+        r2Slider.addEventListener(
+          "input",
+          inputHandler(r2Slider, r2Value, "r2"),
+        );
+        btnPause.addEventListener("click", () => {
+          config.isPlaying = !config.isPlaying;
+          btnPauseIcon.className = config.isPlaying
+            ? "fa-solid fa-pause"
+            : "fa-solid fa-play";
+          btnPauseText.innerText = config.isPlaying ? "일시정지" : "재생";
+        });
+        btnReset.addEventListener("click", () => {
+          location.reload();
+        }); // Simple reset for reload
+        showVectorsChk.addEventListener("change", (e) => {
+          config.showVectors = e.target.checked;
+          vectorArrowA.visible = vectorArrowB.visible = config.showVectors;
+        });
+        showTrailsChk.addEventListener("change", (e) => {
+          config.showTrails = e.target.checked;
+          updateTrails();
+        });
+        camIso.addEventListener("click", () => setCameraPreset("iso"));
+        camTop.addEventListener("click", () => setCameraPreset("top"));
+      }
+
+      function onWindowResize() {
+        const container = document.getElementById("canvas-container");
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        if (config.isPlaying) {
+          currentAngle += config.omega * dt;
+          disc.rotation.y = currentAngle;
+        }
+
+        const getPos = (r) =>
+          new THREE.Vector3(
+            r * Math.cos(currentAngle),
+            0.25,
+            r * Math.sin(currentAngle),
+          );
+        const posA = getPos(config.r1),
+          posB = getPos(config.r2);
+        pointA.position.copy(posA);
+        pointB.position.copy(posB);
+
+        if (config.showVectors) {
+          const tangentDirection = new THREE.Vector3(
+            -Math.sin(currentAngle),
+            0,
+            Math.cos(currentAngle),
+          );
+          const vA = config.r1 * config.omega,
+            vB = config.r2 * config.omega;
+          const scale = 0.5; // Visual scaling factor for vectors
+          vectorArrowA.position.copy(posA);
+          vectorArrowA.setDirection(tangentDirection);
+          vectorArrowA.setLength(vA * scale, 0.4, 0.2);
+          vectorArrowB.position.copy(posB);
+          vectorArrowB.setDirection(tangentDirection);
+          vectorArrowB.setLength(vB * scale, 0.4, 0.2);
+        }
+        controls.update();
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>

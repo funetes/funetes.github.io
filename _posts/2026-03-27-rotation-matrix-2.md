@@ -44,4 +44,4 @@ $$R_z(\theta) = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta)
 
 위 행렬들이 어떻게 나왔는지 이해하기위한 시각화입니다.
 
-<iframe src="/sample/rotation.html" style="width:100%; height:800px; border:none; margin-top:20px;"></iframe>
+<iframe src="/lab/rotation.html" style="width:100%; height:800px; border:none; margin-top:20px;"></iframe>
