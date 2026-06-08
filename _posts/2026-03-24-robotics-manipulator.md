@@ -2,6 +2,7 @@
 layout: post
 title: "Robot Manipulator"
 date: 2026-03-24 12:00:00 +0900
+categories: Kinematics
 ---
 
 # Robot Manipulator

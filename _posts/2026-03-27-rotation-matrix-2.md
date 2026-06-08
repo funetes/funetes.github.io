@@ -2,6 +2,7 @@
 layout: post
 title: "Mapping"
 date: 2026-03-27 12:00:00 +0900
+categories: Kinematics
 ---
 
 # 3D 공간에서의 매핑(Mapping)과 회전 행렬

@@ -2,6 +2,7 @@
 layout: post
 title: "Inverse Rotation Matrix"
 date: 2026-03-26 12:00:00 +0900
+categories: Kinematics
 ---
 
 ## Inverse Rotation Matrix
